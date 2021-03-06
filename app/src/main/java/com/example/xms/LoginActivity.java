@@ -32,18 +32,18 @@ public class LoginActivity extends Activity {
 
         email = (EditText) findViewById(R.id.etusername);
         password = (EditText) findViewById(R.id.etpassword);
-        login = (Button) findViewById(R.id.btnLogin);
+        login = (Button) findViewById(R.id.btnlogin);
 
         smail = email.getText().toString().trim();
         spassword = password.getText().toString().trim();
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser()!=null){
-            Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
-            startActivity(i);
-            finish();
-        }
+//        if(mAuth.getCurrentUser()!=null){
+//            Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
+//            startActivity(i);
+//            finish();
+//        }
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +70,11 @@ public class LoginActivity extends Activity {
     }
 
     private boolean validate() {
+
+        smail = email.getText().toString().trim();
+        spassword = password.getText().toString().trim();
+
+
         boolean valid = true;
         if (TextUtils.isEmpty(smail) || !smail.contains(".com") || !smail.contains("@")) {
             email.setError("Enter a valid email");

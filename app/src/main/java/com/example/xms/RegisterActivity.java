@@ -15,7 +15,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends Activity {
 
@@ -28,19 +32,19 @@ public class RegisterActivity extends Activity {
 
     FirebaseAuth mAuth;
     FirebaseFirestore fdb;
-
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         fname = (EditText) findViewById(R.id.etname);
         lname = (EditText) findViewById(R.id.etsname);
         email = (EditText) findViewById(R.id.etusername);
         password = (EditText) findViewById(R.id.etpassword);
         phone = (EditText) findViewById(R.id.etphone);
-        register = (Button) findViewById(R.id.btnLogin);
+        register = (Button) findViewById(R.id.btnregister);
 
         sfname = fname.getText().toString().trim();
         slname = lname.getText().toString().trim();
@@ -49,12 +53,13 @@ public class RegisterActivity extends Activity {
         sphone = phone.getText().toString().trim();
 
         mAuth = FirebaseAuth.getInstance();
+        fdb = FirebaseFirestore.getInstance();
 
-        if(mAuth.getCurrentUser()!=null){
-            Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
-            startActivity(i);
-            finish();
-        }
+//        if(mAuth.getCurrentUser()!=null){
+//            Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
+//            startActivity(i);
+//            finish();
+//        }
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,9 +69,27 @@ public class RegisterActivity extends Activity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(RegisterActivity.this,"Registeration Successfull",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this,"Registration Successful",Toast.LENGTH_SHORT).show();
+
+                                userID = mAuth.getCurrentUser().getUid();
+                                DocumentReference documentReference = fdb.collection("users").document(userID);
+                                Map<String,Object> user = new HashMap<>();
+                                user.put("fname",sfname);
+                                user.put("lname",slname);
+                                user.put("email",smail);
+                                user.put("phone",sphone);
+//                                user.put("profilePic",profilePic);
+
+//                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void aVoid) {
+//                                      Log.d(TAG,"data store in database for" + userID);
+//                                    }
+//                                });
+
                                 Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
                                 startActivity(i);
+
                             }else{
                                 Toast.makeText(RegisterActivity.this,task.getException().getMessage()+"...try again",Toast.LENGTH_SHORT).show();
                             }
@@ -83,6 +106,13 @@ public class RegisterActivity extends Activity {
     }
 
     private boolean validate() {
+
+        sfname = fname.getText().toString().trim();
+        slname = lname.getText().toString().trim();
+        smail = email.getText().toString().trim();
+        spassword = password.getText().toString().trim();
+        sphone = phone.getText().toString().trim();
+
         boolean valid = true;
         if (TextUtils.isEmpty(smail) || !smail.contains(".com") || !smail.contains("@")) {
             email.setError("Enter a valid email");
