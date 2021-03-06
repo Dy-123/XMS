@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "91367038061",
+    "project_id": "x-ms-708bc",
+    "storage_bucket": "x-ms-708bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91367038061:android:475b7d9c1d6adebbe63364",
+        "android_client_info": {
+          "package_name": "com.example.xms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "91367038061-jud2p5v9vgonrvq7ts7mfc9oh4sc84vk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaPtkNOGZhviNrX33Oq-_piwzBvUh9thw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91367038061-jud2p5v9vgonrvq7ts7mfc9oh4sc84vk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
