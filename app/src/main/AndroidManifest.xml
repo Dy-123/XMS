@@ -25,6 +25,22 @@
             </intent-filter>
         </activity>
 
+
+        <!-- Now configure the FileProvider. In your app's manifest, add a provider to your application
+         https://developer.android.com/training/camera/photobasics -->
+
+        <!-- com.example.android.fileprovider => com.example.xms.android.fileprovider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.xms.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>                 <!-- created a new xml resource file with name file_paths -->
+        </provider>
+
+
         <activity android:name=".LoginActivity"></activity>
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".UserDashboardActivity"></activity>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- https://developer.android.com/training/camera/photobasics
+ In the meta-data section of the provider definition, you can see that the provider expects eligible paths to be configured in a dedicated resource file, res/xml/file_paths.xml.
+ Here is the content required for this particular example: -->
+
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-files-path name="my_images" path="Pictures" />
+</paths>
+<!-- checkout the documentation of FileProvider(https://developer.android.com/reference/androidx/core/content/FileProvider) for an extensive description of path specifiers that you can use besides external-path. -->

@@ -77,7 +77,7 @@ public class LoginActivity extends Activity {
 
 
         boolean valid = true;
-        if (TextUtils.isEmpty(smail) || !smail.contains(".com") || !smail.contains("@")) {
+        if (TextUtils.isEmpty(smail) || !smail.contains(".") || !smail.contains("@")) {
             email.setError("Enter a valid email");
             valid = false;
         }

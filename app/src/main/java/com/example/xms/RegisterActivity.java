@@ -6,7 +6,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,6 +33,10 @@ import com.google.firebase.database.Logger;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +94,8 @@ public class RegisterActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {                  //Checking if camera permission has been provided or not
-                    Toast.makeText(RegisterActivity.this, "You have already granted this permission!",Toast.LENGTH_SHORT).show();
+//                  Toast.makeText(RegisterActivity.this, "You have already granted this permission!",Toast.LENGTH_SHORT).show();
+                    dispatchTakePictureIntent();
                 } else {                                                                                                                                                  // if camera permission has not been provided then
                     requestCameraPermission();
                 }
@@ -147,7 +157,7 @@ public class RegisterActivity extends Activity {
         sphone = phone.getText().toString().trim();
 
         boolean valid = true;
-        if (TextUtils.isEmpty(smail) || !smail.contains(".com") || !smail.contains("@")) {
+        if (TextUtils.isEmpty(smail) || !smail.contains(".") || !smail.contains("@")) {
             email.setError("Enter a valid email");
             valid = false;
         }
@@ -202,15 +212,87 @@ public class RegisterActivity extends Activity {
         if (requestCode == permissioncode)  {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Smile ...", Toast.LENGTH_SHORT).show();
-//                openCamera();
+//                Camera();                                                                                                 // capturing the image and displaying directly to imageView in "bitmap image form" thus very low quality of image view and no way to upload it in database
+                dispatchTakePictureIntent();                                                                                // capturing the image and then saving it to local storage and displaying the image on imageView
+
             } else {
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-//    private void openCamera(){
-//
+//    private void Camera(){                                                                          // It will open the camera
+//    Intent cam = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//    startActivityForResult(cam,123);                                                                // Launch an activity for which you would like a result when it finished.
 //    }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode == 123){
+//            Bitmap img = (Bitmap) data.getExtras().get("data");                                     // bitmap image
+//            profilePic.setImageBitmap(img);
+//        }
+//    }
+
+
+    //  https://developer.android.com/training/camera/photobasics
+
+    //  https://developer.android.com/training/camera/photobasics#TaskPath
+    //  returns a unique file name for a new photo using a date-time stamp
+    String currentPhotoPath;                                                                            // to store the absolute directory
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());          // getting timestamp which will used to give unique file name to the photo
+        String imageFileName = "JPEG_" + timeStamp + "_";                                               // file name for image
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);                          // getting storage directory where image file will be stored
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();                                                      // image.getAbsolutePath() return the absolute path of the image created
+        return image;                                                                                    // this will return the image will be used in dispatchTakePictureIntent()
+    }
+
+    // With this method available to create a file for the photo, you can now create and invoke the Intent like this:
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {                             // to check if camera is present in the device or not
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.xms.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                startActivityForResult(takePictureIntent, 123);                             // Launch an activity for which you would like a result when it finished.
+            }
+        }
+    }
+
+    /* Now configuring the FileProvider. In your app's manifest, add a provider to your application. */
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 123) {
+            if (resultCode == Activity.RESULT_OK) {
+                File f = new File(currentPhotoPath);
+                profilePic.setImageURI(Uri.fromFile(f));
+            }
+        }
+    }
 }
