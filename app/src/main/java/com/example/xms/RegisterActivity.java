@@ -1,16 +1,23 @@
 package com.example.xms;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +37,11 @@ public class RegisterActivity extends Activity {
 
 
     private EditText fname, lname, email, password, phone;
-//    private ImageView profilePic;
+
+    private ImageView profilePic;
+    private Button camera,gallery;
+    private int permissioncode = 1 ;
+
     private Button register;
 
     private String sfname,slname,smail,spassword,sphone;
@@ -51,6 +62,10 @@ public class RegisterActivity extends Activity {
         phone = (EditText) findViewById(R.id.etphone);
         register = (Button) findViewById(R.id.btnregister);
 
+        profilePic = (ImageView) findViewById(R.id.profilePic);
+        camera = (Button) findViewById(R.id.btncamera);
+        gallery = (Button) findViewById(R.id.btngallery);
+
         sfname = fname.getText().toString().trim();
         slname = lname.getText().toString().trim();
         smail = email.getText().toString().trim();
@@ -65,6 +80,17 @@ public class RegisterActivity extends Activity {
 //            startActivity(i);
 //            finish();
 //        }
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(RegisterActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {                  //Checking if camera permission has been provided or not
+                    Toast.makeText(RegisterActivity.this, "You have already granted this permission!",Toast.LENGTH_SHORT).show();
+                } else {                                                                                                                                                  // if camera permission has not been provided then
+                    requestCameraPermission();
+                }
+            }
+        });
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,5 +169,48 @@ public class RegisterActivity extends Activity {
         }
         return valid;
     }
+
+    private void requestCameraPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.CAMERA)) {
+            new AlertDialog.Builder(this)                                                                            // calling and defining alert dialog
+                    .setTitle("Camera Permission Needed")
+                    .setMessage("This permission is need for capturing the profile photo")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(RegisterActivity.this,
+                                    new String[] {Manifest.permission.CAMERA}, permissioncode);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create()                                                                                               // to create the dialog
+                    .show();                                                                                                // to show the dialog
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.CAMERA}, permissioncode);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == permissioncode)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Smile ...", Toast.LENGTH_SHORT).show();
+//                openCamera();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+//    private void openCamera(){
+//
+//    }
 
 }
