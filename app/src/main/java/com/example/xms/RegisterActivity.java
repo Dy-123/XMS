@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,6 +33,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Logger;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +62,8 @@ public class RegisterActivity extends Activity {
     FirebaseAuth mAuth;
     FirebaseFirestore fdb;
     private String userID;
+    StorageReference storageRef;
+    Uri fileloc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +89,7 @@ public class RegisterActivity extends Activity {
 
         mAuth = FirebaseAuth.getInstance();
         fdb = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
 
 //        if(mAuth.getCurrentUser()!=null){
 //            Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
@@ -115,11 +122,34 @@ public class RegisterActivity extends Activity {
                                 userID = mAuth.getCurrentUser().getUid();
                                 DocumentReference documentReference = fdb.collection("users").document(userID);
                                 Map<String,Object> user = new HashMap<>();
-                                user.put("fname",sfname);
-                                user.put("lname",slname);
+                                user.put("firstName",sfname);
+                                user.put("lastName",slname);
                                 user.put("email",smail);
                                 user.put("phone",sphone);
-//                                user.put("profilePic",profilePic);
+                                user.put("password",spassword);
+
+                                StorageReference fileUp = storageRef.child("profilePicture/"+userID+".jpg");
+                                UploadTask uploadTask = fileUp.putFile(fileloc);                                            // fileUp.putFile(fileloc) => will upload the file to firebase storage
+
+                                uploadTask.addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle unsuccessful uploads
+
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                                    }
+                                }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                                        user.put("profilePic",fileUp.getDownloadUrl().toString());                 // problem in saving the download url no record for this line in database
+                                    }
+                                });
+
+//                                user.put("profilePic",fileUp.getDownloadUrl().toString());
 
                                 documentReference.set(user);
 //                                OR
@@ -292,6 +322,8 @@ public class RegisterActivity extends Activity {
             if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
                 profilePic.setImageURI(Uri.fromFile(f));
+
+                fileloc = Uri.fromFile(f);
             }
         }
     }
