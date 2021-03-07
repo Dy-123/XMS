@@ -64,6 +64,7 @@ public class LoginActivity extends Activity {
 
                 }else{
                     Toast.makeText(LoginActivity.this,"Enter Valid Details",Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
