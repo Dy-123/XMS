@@ -120,16 +120,17 @@ public class RegisterActivity extends Activity {
                                 Toast.makeText(RegisterActivity.this,"Registration Successful",Toast.LENGTH_SHORT).show();
 
                                 userID = mAuth.getCurrentUser().getUid();
-                                DocumentReference documentReference = fdb.collection("users").document(userID);
+                                DocumentReference documentReference = fdb.collection("users").document(userID);                                  // creating a document reference of userID inside users collection
                                 Map<String,Object> user = new HashMap<>();
-                                user.put("firstName",sfname);
+                                user.put("firstName",sfname);                                                                                                 // put method of map will insert a mapping in map
                                 user.put("lastName",slname);
                                 user.put("email",smail);
                                 user.put("phone",sphone);
                                 user.put("password",spassword);
 
-                                StorageReference fileUp = storageRef.child("profilePicture/"+userID+".jpg");
-                                UploadTask uploadTask = fileUp.putFile(fileloc);                                            // fileUp.putFile(fileloc) => will upload the file to firebase storage
+                                StorageReference fileUp = storageRef.child("profilePicture/"+userID+".jpg");                                                  // create a child reference
+                                // TODO : Compress the image size otherwise app will close on large image size while uploading in firebase
+                                UploadTask uploadTask = fileUp.putFile(fileloc);                                            // fileUp.putFile(fileloc) => will upload the file to firebase storage asynchronously
 
                                 uploadTask.addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -145,13 +146,13 @@ public class RegisterActivity extends Activity {
                                 }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                                        user.put("profilePic",fileUp.getDownloadUrl().toString());                 // problem in saving the download url no record for this line in database
+//                                        user.put("profilePic",fileUp.getDownloadUrl().toString());                 //TODO: uploading the url of firebase storage to databse
                                     }
                                 });
 
 //                                user.put("profilePic",fileUp.getDownloadUrl().toString());
 
-                                documentReference.set(user);
+                                documentReference.set(user);                                                           // create or overwrite the document in firebase store
 //                                OR
 //                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
 //                                    @Override
@@ -207,6 +208,13 @@ public class RegisterActivity extends Activity {
             phone.setError("Enter a valid phone number");
             valid = false;
         }
+
+//        // user has selected a profilePic or not
+//        if(!fileloc.isAbsolute()){
+//            Toast.makeText(RegisterActivity.this,"Please upload a photo",Toast.LENGTH_SHORT).show();
+//            valid = false;
+//        }
+
         return valid;
     }
 
@@ -242,7 +250,7 @@ public class RegisterActivity extends Activity {
         if (requestCode == permissioncode)  {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Smile ...", Toast.LENGTH_SHORT).show();
-//                Camera();                                                                                                 // capturing the image and displaying directly to imageView in "bitmap image form" thus very low quality of image view and no way to upload it in database
+//                Camera();                                                                                                 // capturing the image and displaying directly to imageView in thumbnail thus very low quality of image view and no way to upload it in database
                 dispatchTakePictureIntent();                                                                                // capturing the image and then saving it to local storage and displaying the image on imageView
 
             } else {
@@ -300,14 +308,13 @@ public class RegisterActivity extends Activity {
                 // Error occurred while creating the File
 
             }
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.xms.android.fileprovider",
-                        photoFile);
+                Uri photoURI = FileProvider.getUriForFile(this,"com.example.xms.android.fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 
-                startActivityForResult(takePictureIntent, 123);                             // Launch an activity for which you would like a result when it finished.
+                startActivityForResult(takePictureIntent, 123);                             // Launch an activity for which you would like a result when it finished here the intent is to capture a image from camera
             }
         }
     }
