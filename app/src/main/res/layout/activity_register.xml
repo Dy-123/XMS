@@ -101,11 +101,13 @@
         android:id="@+id/profilePic"
         android:layout_width="133dp"
         android:layout_height="130dp"
+        android:background="#FFFFFF"
         android:src="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/etname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/existing_user1" />
 
     <Button
         android:id="@+id/btncamera"

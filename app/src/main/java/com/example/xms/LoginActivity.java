@@ -21,6 +21,7 @@ public class LoginActivity extends Activity {
     private EditText email, password;
     private Button login;
 
+
     private String smail, spassword;
 
     FirebaseAuth mAuth;
@@ -55,7 +56,9 @@ public class LoginActivity extends Activity {
                             if(task.isSuccessful()){
                                 Toast.makeText(LoginActivity.this,"Login Successfull",Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
+
                                 startActivity(i);
+
                             }else{
                                 Toast.makeText(LoginActivity.this,task.getException().getMessage()+"...try again",Toast.LENGTH_SHORT).show();
                             }
