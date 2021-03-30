@@ -45,6 +45,7 @@
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".UserDashboardActivity"></activity>
         <activity android:name=".UserDetailActivity"></activity>
+        <activity android:name=".UpdateLoginCredentialsActivity"></activity>
 
     </application>
 
