@@ -35,6 +35,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -59,6 +60,8 @@ public class UserDetailActivity extends Activity {
     private String ifname,ilname,iphone;
     private String ffname,flname,fphone;
 
+    private File localFile;
+
     FirebaseUser user;
     DocumentReference docRef;
     FirebaseFirestore fdb;
@@ -74,7 +77,7 @@ public class UserDetailActivity extends Activity {
         fname = findViewById(R.id.txtfname);
         lname = findViewById(R.id.txtlname);
         phone = findViewById(R.id.txtphone);
-        profilePic = findViewById(R.id.userprofilePic);
+        profilePic = (ImageView) findViewById(R.id.userprofilePic);
         camera = findViewById(R.id.btnudcamera);
         update = findViewById(R.id.btnupdate);
         loginCredentials = findViewById(R.id.btnlogincredentials);
@@ -105,7 +108,29 @@ public class UserDetailActivity extends Activity {
 
         storageRef = FirebaseStorage.getInstance().getReference();
         fileLocation = storageRef.child("profilePicture/"+user.getUid().trim()+".jpg");
-//        Glide.with(this).load(fileLocation).into(profilePic);                                                                 // TODO Resolve glide error
+//        Glide.with(this).load(fileLocation.toString().trim()).into(profilePic);                                                                 // TODO why glide method is not working ?
+
+        //Alternate to glide by downloading it locally
+
+        localFile = null;
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            localFile = File.createTempFile("images"+user.getUid().trim()+timeStamp, "jpg");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        fileLocation.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                profilePic.setImageURI(Uri.fromFile(localFile));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
 
 
         camera.setOnClickListener(new View.OnClickListener() {

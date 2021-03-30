@@ -62,7 +62,7 @@ public class LoginActivity extends Activity {
                                 startActivity(i);
 
                             }else{
-                                Toast.makeText(LoginActivity.this,task.getException().getMessage()+"...try again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this,"Invalid Password or User doesn't exist",Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
