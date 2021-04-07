@@ -110,12 +110,12 @@ public class UserDetailActivity extends Activity {
         fileLocation = storageRef.child("profilePicture/"+user.getUid().trim()+".jpg");
 //        Glide.with(this).load(fileLocation.toString().trim()).into(profilePic);                                                                 // TODO why glide method is not working ?
 
-        //Alternate to glide by downloading it locally
+        // Alternate to glide by downloading it locally in tempFile
 
         localFile = null;
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            localFile = File.createTempFile("images"+user.getUid().trim()+timeStamp, "jpg");
+            localFile = File.createTempFile("images"+user.getUid().trim()+timeStamp, "jpeg");
         } catch (IOException e) {
             e.printStackTrace();
         }

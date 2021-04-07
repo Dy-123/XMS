@@ -12,6 +12,7 @@
     <string name="entry">ENTRY</string>
     <string name="exit">EXIT</string>
     <string name="history">HISTORY</string>
+    <string name="log_details">LOG DETAILS</string>
     <string name="profile">PROFILE</string>
     <string name="help">HELP</string>
     <string name="social">SOCIAL</string>
