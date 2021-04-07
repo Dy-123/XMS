@@ -120,17 +120,4 @@
         app:layout_constraintStart_toEndOf="@+id/profilePic"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btngallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="Gallery"
-        app:layout_constraintBottom_toTopOf="@+id/etname"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/profilePic"
-        app:layout_constraintTop_toBottomOf="@+id/btncamera"
-        app:layout_constraintVertical_bias="0.208" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

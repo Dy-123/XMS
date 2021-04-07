@@ -52,7 +52,8 @@ public class RegisterActivity extends Activity {
     private EditText fname, lname, email, password, phone;
 
     private ImageView profilePic;
-    private Button camera,gallery;
+    private Button camera;
+//    private Button gallery;
     private int permissioncode = 1 ;
 
     private Button register;
@@ -79,7 +80,7 @@ public class RegisterActivity extends Activity {
 
         profilePic = (ImageView) findViewById(R.id.profilePic);
         camera = (Button) findViewById(R.id.btncamera);
-        gallery = (Button) findViewById(R.id.btngallery);
+//        gallery = (Button) findViewById(R.id.btngallery);
 
         sfname = fname.getText().toString().trim();
         slname = lname.getText().toString().trim();
