@@ -19,8 +19,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static android.content.ContentValues.TAG;
 
@@ -49,14 +51,18 @@ public class LogDetailActivity extends Activity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 List<String> details = new ArrayList<>();
-                Map<String,Object> map = documentSnapshot.getData();
-                if(map != null) {
+                Map<String,Object> imap = documentSnapshot.getData();
+                if(imap != null) {
+
+                    Map<String, Object> map = new TreeMap<>(Collections.reverseOrder());
+                    map.putAll(imap);
+
                     for (Map.Entry<String, Object> entry : map.entrySet()) {
-                        details.add(entry.getValue().toString().trim() + "  " +entry.getKey().trim());
+                        details.add(entry.getValue().toString().trim() + "  " + entry.getKey().trim());
+                    }
                         rv.setLayoutManager(new LinearLayoutManager(LogDetailActivity.this));
                         MyAdapter adapter = new MyAdapter(LogDetailActivity.this,details);
                         rv.setAdapter(adapter);
-                    }
                 }else{
                     Toast.makeText(LogDetailActivity.this,"No record found",Toast.LENGTH_SHORT).show();
                 }

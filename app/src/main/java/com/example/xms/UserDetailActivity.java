@@ -154,7 +154,7 @@ public class UserDetailActivity extends Activity {
 
                 int count = 0 ;
 
-                if( ifname != ffname ){
+                if(!ifname.equals(ffname)){
 
                     docRef.update("firstName",ffname).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -170,7 +170,7 @@ public class UserDetailActivity extends Activity {
                     count++;
                 }
 
-                if( ilname != flname){
+                if(!ilname.equals(flname)){
 
                     docRef.update("lastName",flname).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -186,7 +186,7 @@ public class UserDetailActivity extends Activity {
                     count++;
                 }
 
-                if( iphone != fphone ){
+                if(!iphone.equals(fphone)){
 
                     docRef.update("phone",fphone).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
