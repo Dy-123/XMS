@@ -2,6 +2,7 @@ package com.example.xms;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +32,7 @@ import static android.content.ContentValues.TAG;
 
 public class UserDashboardActivity extends Activity {
 
-    private Button profile,entry,exit,userLog,peoplePresent;
+    private Button profile,entry,exit,userLog,peoplePresent,social;
 
     private String fname,lname,pNum;
 
@@ -44,6 +45,14 @@ public class UserDashboardActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_dashboard);
+
+        social =findViewById(R.id.social);
+        social.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoUrl("https://github.com/SE-IIT2019123/SE-IIT2019123");
+            }
+        });
 
         profile = findViewById(R.id.btnProfile);
         entry = findViewById(R.id.btnentry);
@@ -145,6 +154,11 @@ public class UserDashboardActivity extends Activity {
         });
 
 
+    }
+
+    private void gotoUrl(String s) {
+        Uri uri = Uri.parse(s);
+        startActivity(new Intent(Intent.ACTION_VIEW,uri));
     }
 
 }
