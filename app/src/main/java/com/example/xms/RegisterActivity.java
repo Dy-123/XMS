@@ -180,6 +180,8 @@ public class RegisterActivity extends Activity {
 
     }
 
+    File proPicExist = null;
+
     private boolean validate() {
 
         sfname = fname.getText().toString().trim();
@@ -207,6 +209,11 @@ public class RegisterActivity extends Activity {
         }
         if(TextUtils.isEmpty(sphone)){
             phone.setError("Enter a valid phone number");
+            valid = false;
+        }
+
+        if(proPicExist == null){
+            Toast.makeText(RegisterActivity.this,"Upload a profile Picture",Toast.LENGTH_SHORT).show();
             valid = false;
         }
 
@@ -329,6 +336,7 @@ public class RegisterActivity extends Activity {
         if(requestCode == 123) {
             if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
+                proPicExist = f;
                 profilePic.setImageURI(Uri.fromFile(f));
 
                 fileloc = Uri.fromFile(f);
