@@ -60,6 +60,7 @@ public class LoginActivity extends Activity {
                                 Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
 
                                 startActivity(i);
+                                finish();
 
                             }else{
                                 Toast.makeText(LoginActivity.this,"Invalid Password or User doesn't exist",Toast.LENGTH_SHORT).show();

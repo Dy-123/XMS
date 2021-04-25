@@ -80,6 +80,7 @@ public class UpdateLoginCredentialsActivity extends Activity {
                     Toast.makeText(UpdateLoginCredentialsActivity.this,"Login Credentials Updated",Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(UpdateLoginCredentialsActivity.this,UserDashboardActivity.class);
                     startActivity(i);
+                    finish();
                 }
 
             }
@@ -90,6 +91,7 @@ public class UpdateLoginCredentialsActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(UpdateLoginCredentialsActivity.this,UserDetailActivity.class);
                 startActivity(i);
+                finish();
             }
         });
 

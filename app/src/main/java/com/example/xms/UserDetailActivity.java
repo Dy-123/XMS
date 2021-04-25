@@ -235,6 +235,7 @@ public class UserDetailActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(UserDetailActivity.this,UpdateLoginCredentialsActivity.class);
                 startActivity(i);
+                finish();
             }
         });
 
@@ -243,6 +244,7 @@ public class UserDetailActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(UserDetailActivity.this,UserDashboardActivity.class);
                 startActivity(i);
+                finish();
             }
         });
 

@@ -164,6 +164,7 @@ public class RegisterActivity extends Activity {
 
                                 Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
                                 startActivity(i);
+                                finish();
 
                             }else{
                                 Toast.makeText(RegisterActivity.this,task.getException().getMessage()+"...try again",Toast.LENGTH_SHORT).show();
