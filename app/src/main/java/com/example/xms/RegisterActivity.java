@@ -53,7 +53,6 @@ public class RegisterActivity extends Activity {
 
     private ImageView profilePic;
     private Button camera;
-//    private Button gallery;
     private int permissioncode = 1 ;
 
     private Button register;
@@ -91,12 +90,6 @@ public class RegisterActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         fdb = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
-
-//        if(mAuth.getCurrentUser()!=null){
-//            Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
-//            startActivity(i);
-//            finish();
-//        }
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,16 +144,7 @@ public class RegisterActivity extends Activity {
                                     }
                                 });
 
-//                                user.put("profilePic",fileUp.getDownloadUrl().toString());
-
                                 documentReference.set(user);                                                           // create or overwrite the document in firebase store
-//                                OR
-//                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                    @Override
-//                                    public void onSuccess(Void aVoid) {
-//                                      Log.d(TAG,"data store in database for" + userID);
-//                                    }
-//                                });
 
                                 Intent i = new Intent(RegisterActivity.this,UserDashboardActivity.class);
                                 startActivity(i);
