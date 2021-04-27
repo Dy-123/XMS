@@ -42,12 +42,6 @@ public class LoginActivity extends Activity {
 
         mAuth = FirebaseAuth.getInstance();
 
-//        if(mAuth.getCurrentUser()!=null){
-//            Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
-//            startActivity(i);
-//            finish();
-//        }
-
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,9 +50,7 @@ public class LoginActivity extends Activity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(LoginActivity.this,"Login Successfull",Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(LoginActivity.this,UserDashboardActivity.class);
-
                                 startActivity(i);
                                 finish();
 

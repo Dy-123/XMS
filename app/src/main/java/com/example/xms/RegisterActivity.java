@@ -218,12 +218,6 @@ public class RegisterActivity extends Activity {
             valid = false;
         }
 
-//        // user has selected a profilePic or not
-//        if(!fileloc.isAbsolute()){
-//            Toast.makeText(RegisterActivity.this,"Please upload a photo",Toast.LENGTH_SHORT).show();
-//            valid = false;
-//        }
-
         return valid;
     }
 

@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -154,77 +155,80 @@ public class UserDetailActivity extends Activity {
 
                 int count = 0 ;
 
-                if(!ifname.equals(ffname)){
 
-                    docRef.update("firstName",ffname).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                if(isvalid()==true) {
+                    if (!ifname.equals(ffname) && !ffname.isEmpty()) {
+
+                        docRef.update("firstName", ffname).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
 //                                Toast.makeText(UserDetailActivity.this,"First Name Updated",Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(UserDetailActivity.this,"Error in Updating First Name",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UserDetailActivity.this, "Error in Updating First Name", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    count++;
-                }
+                        count++;
+                    }
 
-                if(!ilname.equals(flname)){
+                    if (!ilname.equals(flname) && !flname.isEmpty()) {
 
-                    docRef.update("lastName",flname).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                        docRef.update("lastName", flname).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
 //                                Toast.makeText(UserDetailActivity.this,"Last Name Updated",Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(UserDetailActivity.this,"Error in Updating Last Name",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UserDetailActivity.this, "Error in Updating Last Name", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    count++;
-                }
+                        count++;
+                    }
 
-                if(!iphone.equals(fphone)){
+                    if (!iphone.equals(fphone) && !fphone.isEmpty()) {
 
-                    docRef.update("phone",fphone).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                        docRef.update("phone", fphone).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
 //                                Toast.makeText(UserDetailActivity.this,"Phone Number Updated",Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(UserDetailActivity.this,"Error in Updating Phone Number",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UserDetailActivity.this, "Error in Updating Phone Number", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    count++;
-                }
+                        count++;
+                    }
 
-                if( clickstatus == true ){
-                    fileLocation.delete();
-                    StorageReference fileUp = storageRef.child("profilePicture/"+user.getUid().trim()+".jpg");                                                  // create a child reference
-                    // TODO : Compress the image size otherwise app will close on large image size while uploading in firebase
-                    UploadTask uploadTask = fileUp.putFile(fileloc);
+                    if (clickstatus == true) {
+                        fileLocation.delete();
+                        StorageReference fileUp = storageRef.child("profilePicture/" + user.getUid().trim() + ".jpg");                                                  // create a child reference
+                        // TODO : Compress the image size otherwise app will close on large image size while uploading in firebase
+                        UploadTask uploadTask = fileUp.putFile(fileloc);
 
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(UserDetailActivity.this,"Error in Uploading Profile Photo please Re-upload it",Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        }
-                    });
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(UserDetailActivity.this, "Error in Uploading Profile Photo please Re-upload it", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                            }
+                        });
 
-                    count++;
-                }
+                        count++;
+                    }
 
-                if(count !=0 ){
-                    Toast.makeText(UserDetailActivity.this,"Profile Update Successful",Toast.LENGTH_SHORT).show();
+                    if (count != 0) {
+                        Toast.makeText(UserDetailActivity.this, "Profile Update Successful", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -252,8 +256,7 @@ public class UserDetailActivity extends Activity {
     }
 
     private void requestCameraPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.CAMERA)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             new AlertDialog.Builder(this)                                                                            // calling and defining alert dialog
                     .setTitle("Camera Permission Needed")
                     .setMessage("This permission is need for capturing the profile photo")
@@ -273,8 +276,7 @@ public class UserDetailActivity extends Activity {
                     .create()                                                                                               // to create the dialog
                     .show();                                                                                                // to show the dialog
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.CAMERA}, permissioncode);
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA}, permissioncode);
         }
     }
 
@@ -290,6 +292,23 @@ public class UserDetailActivity extends Activity {
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private boolean isvalid() {
+        boolean valid = true;
+        if(ffname.isEmpty()){
+            fname.setError("Field cann't be empty");
+            valid = false;
+        }
+        if(flname.isEmpty()){
+            lname.setError("Field cann't be empty");
+            valid = false;
+        }
+        if(fphone.isEmpty()){
+            phone.setError("Field cann't be empty");
+            valid = false;
+        }
+        return valid;
     }
 
 
@@ -356,3 +375,5 @@ public class UserDetailActivity extends Activity {
     }
 
 }
+
+
