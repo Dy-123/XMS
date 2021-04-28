@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +48,7 @@ import static android.content.ContentValues.TAG;
 public class UserDashboardActivity extends Activity {
 
     private Button profile,entry,exit,userLog,peoplePresent,social;
+    private TextView txtbssid;
 
     private String fname,lname,pNum;
     private String BSSID,probBSSID = "02:00:00:00:00:00";
@@ -74,6 +79,7 @@ public class UserDashboardActivity extends Activity {
         exit = findViewById(R.id.btnexit);
         userLog = findViewById(R.id.btnUserLog);
         peoplePresent = findViewById(R.id.btnPeopleInside);
+        txtbssid = findViewById(R.id.txtbssid);
 
         fbd = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -111,42 +117,54 @@ public class UserDashboardActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if( ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},requestCode);
-                }
+                WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                txtbssid.setText(wifiInfo.getBSSID());
 
-                if( ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-                    BSSID = wifiInfo.getBSSID().trim();
-                }else{
-                    Toast.makeText(UserDashboardActivity.this ,"Location Permission Needed",Toast.LENGTH_SHORT).show();
-                }
+                if(wifiInfo.getBSSID() == null ){
+                    Toast.makeText(
+                            UserDashboardActivity.this,"No WiFi Device Connected",Toast.LENGTH_SHORT).show();
+                }else {
 
-                if(BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-                    Toast.makeText(UserDashboardActivity.this ,"Please Turn On Location",Toast.LENGTH_SHORT).show();
-                }
+                    if (ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(UserDashboardActivity.this, "Connect to a secure WiFi", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                persDetail = fbd.collection("personPresent").document(user.getUid().trim());
-                persDetail.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
-                            Toast.makeText(UserDashboardActivity.this,"Already Inside",Toast.LENGTH_SHORT).show();
-                        }else{
-                            if( !BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID)==true) {
-                                timestamp = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
-                                Map<String, String> detail = new HashMap<>();
-                                detail.put(timestamp.trim(), "Entry");
-                                fbd.collection("UserLogDetail").document(user.getUid().trim()).set(detail, SetOptions.merge());
-                                fbd.collection("personPresent").document(user.getUid().trim()).set(detail);
-                                Toast.makeText(UserDashboardActivity.this, "Entry Detail Recorded", Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(UserDashboardActivity.this,"Not on secure Connection to log the details",Toast.LENGTH_LONG).show();
-                            }
+                        if (ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
                         }
+
+                        if (ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            BSSID = wifiInfo.getBSSID().trim();
+                        } else {
+                            Toast.makeText(UserDashboardActivity.this, "Location Permission Needed", Toast.LENGTH_SHORT).show();
+                        }
+
+                        persDetail = fbd.collection("personPresent").document(user.getUid().trim());
+                        persDetail.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                if (BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                    Toast.makeText(UserDashboardActivity.this, "Please Turn On Location", Toast.LENGTH_SHORT).show();
+                                } else if (documentSnapshot.exists()) {
+                                    Toast.makeText(UserDashboardActivity.this, "Already Inside", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (!BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID) == true) {
+                                        timestamp = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+                                        Map<String, String> detail = new HashMap<>();
+                                        detail.put(timestamp.trim(), "Entry");
+                                        fbd.collection("UserLogDetail").document(user.getUid().trim()).set(detail, SetOptions.merge());
+                                        fbd.collection("personPresent").document(user.getUid().trim()).set(detail);
+                                        Toast.makeText(UserDashboardActivity.this, "Entry Detail Recorded", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(UserDashboardActivity.this, "Not on secure Connection to log the details", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        });
                     }
-                });
+                }
 
             }
         });
@@ -155,42 +173,48 @@ public class UserDashboardActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if( ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},requestCode);
-                }
+                WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                txtbssid.setText(wifiInfo.getBSSID());
 
-                if( ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                    WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-                    BSSID = wifiInfo.getBSSID().trim();
-                }else{
-                    Toast.makeText(UserDashboardActivity.this ,"Location Permission Needed",Toast.LENGTH_SHORT).show();
-                }
+                if(wifiInfo.getBSSID() == null ){
+                    Toast.makeText(UserDashboardActivity.this,"No WiFi Device Connected",Toast.LENGTH_SHORT).show();
+                }else {
 
-                if(BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-                    Toast.makeText(UserDashboardActivity.this ,"Please Turn On Location",Toast.LENGTH_SHORT).show();
-                }
-
-                persDetail = fbd.collection("personPresent").document(user.getUid().trim());
-                persDetail.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
-                            if( !BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID)==true ) {
-                                timestamp = new SimpleDateFormat("dd-MM-yyyy kk:mm:ss").format(new Date());
-                                Map<String, String> detail = new HashMap<>();
-                                detail.put(timestamp.trim(), "Exit");
-                                fbd.collection("UserLogDetail").document(user.getUid().trim()).set(detail, SetOptions.merge());
-                                fbd.collection("personPresent").document(user.getUid().trim()).delete();
-                                Toast.makeText(UserDashboardActivity.this, "Exit Detail Recorded", Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(UserDashboardActivity.this,"Not on secure Connection to log the details",Toast.LENGTH_LONG).show();
-                            }
-                        }else{
-                            Toast.makeText(UserDashboardActivity.this,"Already Outside",Toast.LENGTH_SHORT).show();
-                        }
+                    if (ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
                     }
-                });
+
+                    if (ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        BSSID = wifiInfo.getBSSID().trim();
+                    } else {
+                        Toast.makeText(UserDashboardActivity.this, "Location Permission Needed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    persDetail = fbd.collection("personPresent").document(user.getUid().trim());
+                    persDetail.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            if (BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                Toast.makeText(UserDashboardActivity.this, "Please Turn On Location", Toast.LENGTH_SHORT).show();
+                            } else if (documentSnapshot.exists()) {
+                                if (!BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID) == true) {
+                                    timestamp = new SimpleDateFormat("dd-MM-yyyy kk:mm:ss").format(new Date());
+                                    Map<String, String> detail = new HashMap<>();
+                                    detail.put(timestamp.trim(), "Exit");
+                                    fbd.collection("UserLogDetail").document(user.getUid().trim()).set(detail, SetOptions.merge());
+                                    fbd.collection("personPresent").document(user.getUid().trim()).delete();
+                                    Toast.makeText(UserDashboardActivity.this, "Exit Detail Recorded", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UserDashboardActivity.this, "Not on secure Connection to log the details", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(UserDashboardActivity.this, "Already Outside", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
 
             }
         });
