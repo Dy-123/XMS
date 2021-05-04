@@ -183,7 +183,7 @@ public class UserDashboardActivity extends Activity {
                                     } else if (documentSnapshot.exists()) {
                                         Toast.makeText(UserDashboardActivity.this, "Already Inside", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        if (BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID) == true) {
+                                        if (!BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID)) {
                                             timestamp = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
                                             Map<String, String> detail = new HashMap<>();
                                             detail.put(timestamp.trim(), "Entry");
@@ -264,7 +264,7 @@ public class UserDashboardActivity extends Activity {
                                     Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                                     startActivity(i);
                                 } else if (documentSnapshot.exists()) {
-                                    if (!BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID) == true) {
+                                    if (!BSSID.equals(probBSSID) && ContextCompat.checkSelfPermission(UserDashboardActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && details.contains(BSSID) ) {
                                         timestamp = new SimpleDateFormat("dd-MM-yyyy kk:mm:ss").format(new Date());
                                         Map<String, String> detail = new HashMap<>();
                                         detail.put(timestamp.trim(), "Exit");
