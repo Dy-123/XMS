@@ -3,14 +3,17 @@ package com.example.xms;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,8 +49,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import io.grpc.Context;
-
 import static android.content.ContentValues.TAG;
 
 public class UserDetailActivity extends Activity {
@@ -62,6 +63,8 @@ public class UserDetailActivity extends Activity {
     private String ffname,flname,fphone;
 
     private File localFile;
+
+    SharedPreferences sharedPreferences;
 
     FirebaseUser user;
     DocumentReference docRef;
@@ -133,6 +136,7 @@ public class UserDetailActivity extends Activity {
             }
         });
 
+        sharedPreferences = getSharedPreferences("XMS.MYXMSPROJECT2019123", Context.MODE_PRIVATE);
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,6 +261,11 @@ public class UserDetailActivity extends Activity {
 
     private void requestCameraPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+
+            SharedPreferences.Editor predi = sharedPreferences.edit();
+            predi.putString("CameraNever","Y");
+            predi.apply();
+
             new AlertDialog.Builder(this)                                                                            // calling and defining alert dialog
                     .setTitle("Camera Permission Needed")
                     .setMessage("This permission is need for capturing the profile photo")
@@ -275,7 +284,13 @@ public class UserDetailActivity extends Activity {
                     })
                     .create()                                                                                               // to create the dialog
                     .show();                                                                                                // to show the dialog
-        } else {
+        }else if(ContextCompat.checkSelfPermission(UserDetailActivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED && sharedPreferences.getString("CameraNever","N").equals("Y")){
+            Toast.makeText(UserDetailActivity.this,"Enable Camera Permission",Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", UserDetailActivity.this.getPackageName(),null);
+            i.setData(uri);
+            startActivity(i);
+        }else {
             ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA}, permissioncode);
         }
     }

@@ -3,14 +3,17 @@ package com.example.xms;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Logger;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -58,6 +62,8 @@ public class RegisterActivity extends Activity {
     private Button register;
 
     private String sfname,slname,smail,spassword,sphone;
+
+    SharedPreferences sharedPreferences ;
 
     FirebaseAuth mAuth;
     FirebaseFirestore fdb;
@@ -90,6 +96,8 @@ public class RegisterActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         fdb = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
+
+        sharedPreferences = getSharedPreferences("XMS.MYXMSPROJECT2019123",Context.MODE_PRIVATE);
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,16 +214,19 @@ public class RegisterActivity extends Activity {
     }
 
     private void requestCameraPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.CAMERA)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+
+            SharedPreferences.Editor predi = sharedPreferences.edit();
+            predi.putString("CameraNever","Y");
+            predi.apply();
+
             new AlertDialog.Builder(this)                                                                            // calling and defining alert dialog
                     .setTitle("Camera Permission Needed")
                     .setMessage("This permission is need for capturing the profile photo")
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(RegisterActivity.this,
-                                    new String[] {Manifest.permission.CAMERA}, permissioncode);
+                            ActivityCompat.requestPermissions(RegisterActivity.this, new String[] {Manifest.permission.CAMERA}, permissioncode);
                         }
                     })
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -226,9 +237,14 @@ public class RegisterActivity extends Activity {
                     })
                     .create()                                                                                               // to create the dialog
                     .show();                                                                                                // to show the dialog
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.CAMERA}, permissioncode);
+        }else if(ContextCompat.checkSelfPermission(RegisterActivity.this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED && sharedPreferences.getString("CameraNever","N").equals("Y")){
+            Toast.makeText(RegisterActivity.this,"Enable Camera Permission",Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", RegisterActivity.this.getPackageName(),null);
+            i.setData(uri);
+            startActivity(i);
+        }else {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, permissioncode);
         }
     }
 
