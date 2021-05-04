@@ -8,9 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -23,22 +20,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.auth.User;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +44,7 @@ import static android.content.ContentValues.TAG;
 
 public class UserDashboardActivity extends Activity {
 
-    private Button profile,entry,exit,userLog,peoplePresent,social;
+    private Button profile,entry,exit,userLog,peoplePresent,social,logout;
     private TextView txtbssid;
 
     private String fname,lname,pNum;
@@ -70,7 +63,7 @@ public class UserDashboardActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_dashboard);
+        setContentView(R.layout.activity_userdashboard);
 
         social =findViewById(R.id.social);
         social.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +78,7 @@ public class UserDashboardActivity extends Activity {
         exit = findViewById(R.id.btnexit);
         userLog = findViewById(R.id.btnUserLog);
         peoplePresent = findViewById(R.id.btnPeopleInside);
+        logout = findViewById(R.id.btnlogout);
         txtbssid = findViewById(R.id.txtbssid);
 
         fbd = FirebaseFirestore.getInstance();
@@ -313,6 +307,16 @@ public class UserDashboardActivity extends Activity {
                     }
 
                 });
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent i = new Intent(UserDashboardActivity.this,MainActivity.class);
+                startActivity(i);
+                finish();
             }
         });
 
