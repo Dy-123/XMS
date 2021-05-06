@@ -1,9 +1,0 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.example.xms",
-    "sha256_cert_fingerprints":
-    ["DA:F8:79:75:EA:97:C6:13:07:10:7F:59:31:34:C3:30:FC:64:57:FE:DA:9C:01:19:8E:AC:A9:E2:57:D9:00:FE"]
-  }
-}]
