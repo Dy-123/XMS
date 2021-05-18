@@ -17,4 +17,12 @@
     <string name="people_in">PEOPLE IN</string>
     <string name="social">SOCIAL</string>
     <string name="user_dashboard">USER DASHBOARD</string>
+    <string name="login">Login</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="login_btn">Login_btn</string>
+    <string name="signup_btn">SignUp</string>
+    <string name="register">Register</string>
+    <string name="camera">Camera</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="first_name">First Name</string>
 </resources>
