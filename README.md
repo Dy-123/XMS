@@ -1,11 +1,17 @@
 # SE-IIT2019123
 
-1. Login and Register ✓
-2. Photo Upload ✓
-3. Edit profile and Login Details ✓
-4. User able to log extry and exit only on trusted WiFi Network ✓
-5. Number of people present inside building ✓
-6. User Entry Exit Log Details ✓   
+Features Implemented
+1. Login and Register 
+2. Photo Upload 
+3. Edit profile and Login Details 
+4. User able to log extry and exit only on trusted WiFi Network 
+5. Number of people present inside building 
+6. User Entry Exit Log Details  
+
+Feature to be implemented
+1. Instead of updating mac address from pc making a Admin module
+2. Resizing of profile photo
+3. Admin can view details of others from application 
 
 xmsdependencies => bash script for installing all the dependecy for addmac.py and xms.py        
 xms.py => python file for adding entry exit input from the csv file to database           
