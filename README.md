@@ -1,4 +1,4 @@
-# SE-IIT2019123
+# XMS
 
 Features Implemented
 1. Login and Register 
